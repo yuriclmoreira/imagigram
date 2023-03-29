@@ -1,23 +1,20 @@
 import React, { useState } from "react";
 import { Button, TextInput, View } from "react-native";
 
-const Register = () => {
+const Register = ({ navigation }) => {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
-  const handleSubmit = () => {
-    return;
-    //TODO:Implement firebase accont creation , sending name,email and password
-  };
+  const handleSubmit = () => {};
   return (
     <View>
-      <TextInput placeholder="Nome" onChange={setName}></TextInput>
-      <TextInput placeholder="E-mail" onChange={setEmail}></TextInput>
+      <TextInput placeholder="Nome" onChangeText={setName}></TextInput>
+      <TextInput placeholder="E-mail" onChangeText={setEmail}></TextInput>
       <TextInput
         placeholder="Password"
         secureTextEntry
-        onChange={setPassword}
+        onChangeText={setPassword}
       ></TextInput>
       <Button title="Submit" onPress={handleSubmit}></Button>
     </View>
