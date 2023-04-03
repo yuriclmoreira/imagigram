@@ -11,7 +11,6 @@ const Login = () => {
   const handleSubmit = async () => {
     const auth = getAuth(app);
     const data = await signInWithEmailAndPassword(auth, email, password);
-    console.log("data: ", data);
   };
 
   return (
@@ -22,9 +21,12 @@ const Login = () => {
         secureTextEntry
         onChangeText={setPassword}
       />
-      <Button icon="login-variant" mode="contained" onPress={handleSubmit}>
-        Submit
-      </Button>
+      <Button
+        title="Entrar"
+        icon="login-variant"
+        mode="contained"
+        onPress={handleSubmit}
+      />
     </View>
   );
 };

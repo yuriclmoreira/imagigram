@@ -43,7 +43,7 @@ const Register = ({ navigation }) => {
         secureTextEntry
         onChangeText={setPassword}
       ></TextInput>
-      <Button title="Submit" onPress={handleSubmit}></Button>
+      <Button title="Criar" onPress={handleSubmit}></Button>
     </View>
   );
 };
