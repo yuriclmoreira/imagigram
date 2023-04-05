@@ -15,6 +15,7 @@ import Landing from "./components/auth/Landing";
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import Main from "./components/Main";
+import Add from "./components/main/Add";
 
 import { app } from "./database/firebaseConfig";
 
@@ -47,12 +48,13 @@ const App = () => {
   const LoggedIn = () => (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName="Main">
           <Stack.Screen
             name="Main"
             component={Main}
             options={{ headerShown: false }}
           />
+          <Stack.Screen name="Add" component={Add} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

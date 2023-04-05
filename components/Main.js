@@ -9,10 +9,10 @@ import { fetchUser } from "../redux/actions";
 
 // Components
 import Feed from "./main/Feed";
-import Add from "./main/Add";
 import Profile from "./main/Profile";
 
 const Tab = createMaterialBottomTabNavigator();
+const Null = () => null;
 
 const Main = (props) => {
   useEffect(() => {
@@ -20,7 +20,11 @@ const Main = (props) => {
   }, []);
 
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      initialRouteName="Feed"
+      backBehavior="initialRoute"
+      labeled={false}
+    >
       <Tab.Screen
         name="Feed"
         component={Feed}
@@ -31,8 +35,14 @@ const Main = (props) => {
         }}
       />
       <Tab.Screen
-        name="Add"
-        component={Add}
+        name="AddContainer"
+        component={Null}
+        listeners={({ navigation }) => ({
+          tabPress: (event) => {
+            event.preventDefault(); // Previnir que nenhum evento padrao aconteca
+            navigation.navigate("Add");
+          },
+        })}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icon name="plus-box" size={26} color={color} />
