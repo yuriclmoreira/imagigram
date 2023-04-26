@@ -4,7 +4,7 @@ import { View, Image } from "react-native";
 import { Text, Button } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 
-export default function Add() {
+export default function Add({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
   const [camera, setCamera] = useState(null);
@@ -86,6 +86,12 @@ export default function Add() {
         </Button>
         <Button icon="image-album" onPress={() => pickImage()}>
           Select from the Gallery
+        </Button>
+        <Button
+          icon="content-save-outline"
+          onPress={() => navigation.navigate("Save", { image })}
+        >
+          Save
         </Button>
       </View>
     </View>
