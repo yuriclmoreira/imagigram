@@ -9,7 +9,11 @@ import { bindActionCreators } from "redux";
 import { getAuth } from "firebase/auth";
 import { app } from "../database/firebaseConfig";
 
-import { fetchUser, fetchUserPosts } from "../redux/actions";
+import {
+  fetchUser,
+  fetchUserPosts,
+  fetchUserFollowing,
+} from "../redux/actions";
 
 import Feed from "./main/Feed";
 import Profile from "./main/Profile";
@@ -19,10 +23,11 @@ const Tab = createMaterialBottomTabNavigator();
 
 const Null = () => null;
 
-const Main = ({ fetchUser, fetchUserPosts }) => {
+const Main = ({ fetchUser, fetchUserPosts, fetchUserFollowing }) => {
   useEffect(() => {
     fetchUser();
     fetchUserPosts();
+    fetchUserFollowing();
   }, []);
 
   const auth = getAuth(app);
@@ -93,6 +98,9 @@ const mapStateToProps = (store) => ({
 });
 
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({ fetchUser, fetchUserPosts }, dispatch);
+  bindActionCreators(
+    { fetchUser, fetchUserPosts, fetchUserFollowing },
+    dispatch
+  );
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

@@ -1,15 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Image, FlatList } from "react-native";
-import { Avatar, Card } from "react-native-paper";
+import { Avatar, Card, Button } from "react-native-paper";
 import { connect } from "react-redux";
 
-import { doc, collection, query, getDocs, getDoc } from "firebase/firestore";
+import {
+  doc,
+  collection,
+  query,
+  getDocs,
+  getDoc,
+  setDoc,
+  deleteDoc,
+} from "firebase/firestore";
 
 import { db } from "../../database/firebaseConfig";
+import { fetchUserFollowing } from "../../redux/actions";
 
-const Profile = ({ currentUser, posts, route }) => {
+const Profile = ({
+  currentUser,
+  following,
+  posts,
+  route,
+  fetchUserFollowing,
+}) => {
   const [user, setUser] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
+  const [isFollowing, setIsFollowing] = useState(false);
+
   const { uid } = route.params;
 
   useEffect(() => {
@@ -21,6 +38,14 @@ const Profile = ({ currentUser, posts, route }) => {
       fetchUserPosts();
     }
   }, [uid]);
+
+  useEffect(() => {
+    if (following.includes(uid)) {
+      setIsFollowing(true);
+    } else {
+      setIsFollowing(false);
+    }
+  }, [following]);
 
   const fetchUser = () => {
     const docRef = doc(db, "users", uid);
@@ -50,6 +75,19 @@ const Profile = ({ currentUser, posts, route }) => {
     setUserPosts(posts);
   };
 
+  const handleFollow = async () => {
+    const followingRef = collection(db, "following");
+    await setDoc(doc(followingRef, currentUser.uid, "userFollowing", uid), {});
+    fetchUserFollowing();
+  };
+
+  const handleUnFollow = async () => {
+    await deleteDoc(
+      doc(db, "following", currentUser.uid, "userFollowing", uid)
+    );
+    fetchUserFollowing();
+  };
+
   if (!user) return <View />;
 
   return (
@@ -70,6 +108,30 @@ const Profile = ({ currentUser, posts, route }) => {
               />
             )}
           />
+          <Card.Content>
+            <Card.Actions>
+              {uid && uid !== currentUser.uid && (
+                <>
+                  {!isFollowing && (
+                    <Button
+                      icon="account-multiple-plus-outline"
+                      onPress={handleFollow}
+                    >
+                      Follow
+                    </Button>
+                  )}
+                  {isFollowing && (
+                    <Button
+                      icon="account-multiple-remove-outline"
+                      onPress={handleUnFollow}
+                    >
+                      Unfollow
+                    </Button>
+                  )}
+                </>
+              )}
+            </Card.Actions>
+          </Card.Content>
         </Card>
       </View>
       <View style={styles.gallery}>
@@ -111,6 +173,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
   posts: store.userState.posts,
+  following: store.userState.following,
 });
 
-export default connect(mapStateToProps, null)(Profile);
+const mapDispatchToProps = { fetchUserFollowing };
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);
