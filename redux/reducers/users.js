@@ -1,4 +1,4 @@
-import { USERS_DATA_CHANGE, USERS_POST_CHANGE } from "../constants";
+import { USERS_DATA_CHANGE, USERS_POST_CHANGE, CLEAR_DATA } from "../constants";
 
 const initialState = {
   users: [],
@@ -19,6 +19,8 @@ const users = (state = initialState, action) => {
         usersFollowingLoaded: state.usersFollowingLoaded + 1,
         feed: [...state.feed, ...action.posts],
       };
+    case CLEAR_DATA:
+      return initialState;
     default:
       return state;
   }

@@ -13,8 +13,10 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 
-import { db } from "../../database/firebaseConfig";
-import { fetchUserFollowing } from "../../redux/actions";
+import { getAuth, signOut } from "firebase/auth";
+
+import { db, app } from "../../database/firebaseConfig";
+import { fetchUserFollowing, clearData } from "../../redux/actions";
 
 const Profile = ({
   currentUser,
@@ -22,6 +24,7 @@ const Profile = ({
   posts,
   route,
   fetchUserFollowing,
+  clearData,
 }) => {
   const [user, setUser] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
@@ -88,6 +91,19 @@ const Profile = ({
     fetchUserFollowing();
   };
 
+  const handleLogout = () => {
+    const auth = getAuth(app);
+
+    signOut(auth)
+      .then(() => {
+        clearData();
+        console.log("Sign-out successful");
+      })
+      .catch((error) => {
+        console.log("An error happened: ", error);
+      });
+  };
+
   if (!user) return <View />;
 
   return (
@@ -129,6 +145,11 @@ const Profile = ({
                     </Button>
                   )}
                 </>
+              )}
+              {uid && uid === currentUser.uid && (
+                <Button icon="logout-variant" onPress={handleLogout}>
+                  Logout
+                </Button>
               )}
             </Card.Actions>
           </Card.Content>
@@ -176,5 +197,5 @@ const mapStateToProps = (store) => ({
   following: store.userState.following,
 });
 
-const mapDispatchToProps = { fetchUserFollowing };
+const mapDispatchToProps = { fetchUserFollowing, clearData };
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

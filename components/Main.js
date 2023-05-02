@@ -13,6 +13,7 @@ import {
   fetchUser,
   fetchUserPosts,
   fetchUserFollowing,
+  clearData,
 } from "../redux/actions";
 
 import Feed from "./main/Feed";
@@ -23,8 +24,9 @@ const Tab = createMaterialBottomTabNavigator();
 
 const Null = () => null;
 
-const Main = ({ fetchUser, fetchUserPosts, fetchUserFollowing }) => {
+const Main = ({ fetchUser, fetchUserPosts, fetchUserFollowing, clearData }) => {
   useEffect(() => {
+    clearData();
     fetchUser();
     fetchUserPosts();
     fetchUserFollowing();
@@ -99,7 +101,7 @@ const mapStateToProps = (store) => ({
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
-    { fetchUser, fetchUserPosts, fetchUserFollowing },
+    { fetchUser, fetchUserPosts, fetchUserFollowing, clearData },
     dispatch
   );
 
