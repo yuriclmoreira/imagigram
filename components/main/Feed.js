@@ -1,4 +1,4 @@
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, setDoc } from "firebase/firestore";
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Image, FlatList } from "react-native";
 
@@ -43,6 +43,12 @@ const Feed = ({
       {}
     );
   };
+  const onDislikePress = async (userId, postId) => {
+    await deleteDoc(
+      doc(db, "posts", userId, "userPosts", postId, "likes", currentUser.uid),
+      {}
+    );
+  };
   return (
     <View style={styles.container}>
       {posts.length === 0 && <Loading />}
@@ -76,13 +82,23 @@ const Feed = ({
                 </View>
                 <Paragraph>{item?.caption}</Paragraph>
                 <Card.Actions>
-                  <Caption>10</Caption>
-                  <Button
-                    icon={"heart"}
-                    onPress={() => onLikePress(item.user.uid, item.id)}
-                  >
-                    Like
-                  </Button>
+                  <Caption>{item?.likes || 1} </Caption>
+                  {item?.currentUserLike ? (
+                    <Button
+                      icon={"heart"}
+                      onPress={() => onDislikePress(item.user.uid, item.id)}
+                    >
+                      Dislike
+                    </Button>
+                  ) : (
+                    <Button
+                      icon={"heart"}
+                      onPress={() => onLikePress(item.user.uid, item.id)}
+                    >
+                      Like
+                    </Button>
+                  )}
+
                   <Button
                     icon={"comment-arrow-right"}
                     onPress={() => {
