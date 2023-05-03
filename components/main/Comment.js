@@ -7,7 +7,7 @@ import { collection, addDoc, query, getDocs } from "firebase/firestore";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-const Comment = ({ currentUser, route }) => {
+const Comment = ({ currentUser, route, users }) => {
   const { postId, uid } = route.params;
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
@@ -25,7 +25,19 @@ const Comment = ({ currentUser, route }) => {
           const id = doc.id;
           return { id, ...data };
         });
-        setComments(comments);
+        const updatedComments = comments.map((comment) => {
+          if (users) {
+            if (comment.hasOwnProperty("user")) return comment;
+            const creator = users?.find((user) => user.uid == comment.creator);
+            if (creator) {
+              comment.user = creator;
+            } else {
+              comment.user = currentUser;
+            }
+            return comment;
+          }
+        });
+        setComments(updatedComments);
       });
       setShowUpdate(false);
     }
@@ -68,7 +80,7 @@ const Comment = ({ currentUser, route }) => {
               {item?.user?.name}
             </Chip>
             <Paragraph style={{ marginLeft: 48, marginBottom: !2 }}>
-              {item.comment}
+              {item?.comment}
             </Paragraph>
           </>
         )}
@@ -89,6 +101,7 @@ const Comment = ({ currentUser, route }) => {
 
 const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
+  users: store.usersState.users,
 });
 
 export default connect(mapStateToProps, null)(Comment);
