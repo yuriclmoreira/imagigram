@@ -3,13 +3,33 @@ import { View, FlatList } from "react-native";
 import { Avatar, Chip, Paragraph, Button, TextInput } from "react-native-paper";
 
 import { db } from "../../database/firebaseConfig";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, query, getDocs } from "firebase/firestore";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 const Comment = ({ currentUser, route }) => {
   const { postId, uid } = route.params;
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
+  const [showUpdate, setShowUpdate] = useState(true);
+
+  useEffect(() => {
+    if (showUpdate) {
+      const postsRef = collection(db, "posts");
+      const queryComments = query(
+        collection(postsRef, uid, "userPosts", postId, "comments")
+      );
+      getDocs(queryComments).then((snapShot) => {
+        const comments = snapShot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          return { id, ...data };
+        });
+        setComments(comments);
+      });
+      setShowUpdate(false);
+    }
+  }, [postId, showUpdate]);
 
   const handleCommentSubmit = () => {
     if (comment) {
@@ -20,7 +40,7 @@ const Comment = ({ currentUser, route }) => {
         comment,
       }).then((snapShot) => {
         setComment("");
-        console.log(`Comentario "${comment}" adicionado com sucesso `);
+        setShowUpdate(true);
       });
     }
   };
