@@ -2,40 +2,28 @@ import React, { useState, useEffect } from "react";
 import { View, FlatList } from "react-native";
 import { Avatar, Chip, Paragraph, Button, TextInput } from "react-native-paper";
 
-const commentsMockData = [
-  {
-    uid: "12314",
-    user: {
-      avatar:
-        "https://wealthspire.com/wp-content/uploads/2017/06/avatar-placeholder-generic-1.jpg",
-      name: "yuri",
-    },
-    comment: "Primeiro comentario",
-  },
-  {
-    uid: "5462",
-    user: {
-      avatar:
-        "https://wealthspire.com/wp-content/uploads/2017/06/avatar-placeholder-generic-1.jpg",
-      name: "yuri2",
-    },
-    comment: "Segundo comentario",
-  },
-  {
-    uid: "33334",
-    user: {
-      avatar:
-        "https://wealthspire.com/wp-content/uploads/2017/06/avatar-placeholder-generic-1.jpg",
-      name: "yuri3",
-    },
-    comment: "Terceiro comentario",
-  },
-];
+import { db } from "../../database/firebaseConfig";
+import { collection, addDoc } from "firebase/firestore";
+import { connect } from "react-redux";
 
-const Comment = ({ route }) => {
+const Comment = ({ currentUser, route }) => {
   const { postId, uid } = route.params;
   const [comment, setComment] = useState("");
-  const [comments, setComments] = useState(commentsMockData);
+  const [comments, setComments] = useState([]);
+
+  const handleCommentSubmit = () => {
+    if (comment) {
+      const postsRef = collection(db, "posts");
+
+      addDoc(collection(postsRef, uid, "userPosts", postId, "comments"), {
+        creator: currentUser.uid,
+        comment,
+      }).then((snapShot) => {
+        setComment("");
+        console.log(`Comentario "${comment}" adicionado com sucesso `);
+      });
+    }
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -65,8 +53,22 @@ const Comment = ({ route }) => {
           </>
         )}
       />
+      <View>
+        <TextInput
+          placeholder="Leave a comment..."
+          value={comment}
+          onChangeText={(value) => setComment(value)}
+        />
+        <Button icon="send" mode="contained" onPress={handleCommentSubmit}>
+          Send
+        </Button>
+      </View>
     </View>
   );
 };
 
-export default Comment;
+const mapStateToProps = (store) => ({
+  currentUser: store.userState.currentUser,
+});
+
+export default connect(mapStateToProps, null)(Comment);
