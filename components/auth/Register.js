@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Button, TextInput, View } from "react-native";
+import { View } from "react-native";
+import { Button, TextInput } from "react-native-paper";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
 
@@ -43,7 +44,14 @@ const Register = ({ navigation }) => {
         secureTextEntry
         onChangeText={setPassword}
       ></TextInput>
-      <Button title="Criar" onPress={handleSubmit}></Button>
+      <Button
+        title="Criar"
+        onPress={handleSubmit}
+        mode="contained"
+        style={{ marginTop: 10, marginHorizontal: 50 }}
+      >
+        Criar
+      </Button>
     </View>
   );
 };
