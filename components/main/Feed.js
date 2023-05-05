@@ -9,13 +9,14 @@ import {
   Caption,
 } from "react-native-paper";
 
+// REDUX
 import { connect } from "react-redux";
-
-import { collection, doc, setDoc, deleteDoc } from "firebase/firestore";
-
-import { db } from "../../database/firebaseConfig";
-
 import { fetchUsersFollowingLikes } from "../../redux/actions";
+import { bindActionCreators } from "redux";
+
+// FIREBASE
+import { collection, doc, setDoc, deleteDoc } from "firebase/firestore";
+import { db } from "../../database/firebaseConfig";
 
 const Loading = () => (
   <View style={styles.loadingContainer}>
@@ -156,6 +157,7 @@ const mapStateToProps = (store) => ({
   usersFollowingLoaded: store.usersState.usersFollowingLoaded,
 });
 
-const mapDispatchToProps = { fetchUsersFollowingLikes };
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators({ fetchUsersFollowingLikes }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Feed);
