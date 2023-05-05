@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Image, FlatList } from "react-native";
 import { Avatar, Card, Button } from "react-native-paper";
-import { connect } from "react-redux";
 
+// REDUX
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { fetchUserFollowing, clearData } from "../../redux/actions";
+
+// FIREBASE
 import {
   doc,
   collection,
@@ -12,11 +17,8 @@ import {
   setDoc,
   deleteDoc,
 } from "firebase/firestore";
-
 import { getAuth, signOut } from "firebase/auth";
-
 import { db, app } from "../../database/firebaseConfig";
-import { fetchUserFollowing, clearData } from "../../redux/actions";
 
 const Profile = ({
   currentUser,
@@ -184,6 +186,7 @@ const styles = StyleSheet.create({
   images: {
     flex: 1 / 3,
     height: 100,
+    marginHorizontal: 20,
   },
   image: {
     flex: 1,
@@ -196,6 +199,7 @@ const mapStateToProps = (store) => ({
   posts: store.userState.posts,
   following: store.userState.following,
 });
+const mapDispatchProps = (dispatch) =>
+  bindActionCreators({ fetchUserFollowing, clearData }, dispatch);
 
-const mapDispatchToProps = { fetchUserFollowing, clearData };
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default connect(mapStateToProps, mapDispatchProps)(Profile);
