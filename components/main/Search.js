@@ -4,7 +4,6 @@ import { Avatar, Chip, Searchbar } from "react-native-paper";
 
 import { collection, query, where, getDocs } from "firebase/firestore";
 import "firebase/firestore";
-
 import { db } from "../../database/firebaseConfig";
 
 const Search = ({ navigation }) => {

@@ -1,18 +1,21 @@
-import { collection, deleteDoc, doc, setDoc } from "firebase/firestore";
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Image, FlatList } from "react-native";
-
 import {
   ActivityIndicator,
   Avatar,
-  Button,
-  Caption,
   Card,
   Paragraph,
+  Button,
+  Caption,
 } from "react-native-paper";
 
 import { connect } from "react-redux";
+
+import { collection, doc, setDoc, deleteDoc } from "firebase/firestore";
+
 import { db } from "../../database/firebaseConfig";
+
+import { fetchUsersFollowingLikes } from "../../redux/actions";
 
 const Loading = () => (
   <View style={styles.loadingContainer}>
@@ -26,6 +29,7 @@ const Feed = ({
   navigation,
   following,
   usersFollowingLoaded,
+  fetchUsersFollowingLikes,
 }) => {
   const [posts, setPosts] = useState([]);
 
@@ -42,13 +46,16 @@ const Feed = ({
       doc(postsRef, userId, "userPosts", postId, "likes", currentUser.uid),
       {}
     );
+    fetchUsersFollowingLikes(userId, postId);
   };
-  const onDislikePress = async (userId, postId) => {
+
+  const onDisLikePress = async (userId, postId) => {
     await deleteDoc(
-      doc(db, "posts", userId, "userPosts", postId, "likes", currentUser.uid),
-      {}
+      doc(db, "posts", userId, "userPosts", postId, "likes", currentUser.uid)
     );
+    fetchUsersFollowingLikes(userId, postId);
   };
+
   return (
     <View style={styles.container}>
       {posts.length === 0 && <Loading />}
@@ -82,25 +89,24 @@ const Feed = ({
                 </View>
                 <Paragraph>{item?.caption}</Paragraph>
                 <Card.Actions>
-                  <Caption>{item?.likes || 1} </Caption>
-                  {item?.currentUserLike ? (
+                  <Caption>{item?.likes}</Caption>
+                  {item?.currentUserLike && item?.likes > 0 ? (
                     <Button
-                      icon={"heart"}
-                      onPress={() => onDislikePress(item.user.uid, item.id)}
+                      icon="heart"
+                      onPress={() => onDisLikePress(item.user.uid, item.id)}
                     >
                       Dislike
                     </Button>
                   ) : (
                     <Button
-                      icon={"heart"}
+                      icon="heart"
                       onPress={() => onLikePress(item.user.uid, item.id)}
                     >
                       Like
                     </Button>
                   )}
-
                   <Button
-                    icon={"comment-arrow-right"}
+                    icon="comment-arrow-right"
                     onPress={() => {
                       navigation.navigate("Comment", {
                         postId: item.id,
@@ -108,7 +114,7 @@ const Feed = ({
                       });
                     }}
                   >
-                    View Comments
+                    View Comments...
                   </Button>
                 </Card.Actions>
               </Card.Content>
@@ -150,4 +156,6 @@ const mapStateToProps = (store) => ({
   usersFollowingLoaded: store.usersState.usersFollowingLoaded,
 });
 
-export default connect(mapStateToProps, null)(Feed);
+const mapDispatchToProps = { fetchUsersFollowingLikes };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Feed);
