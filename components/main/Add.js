@@ -63,37 +63,29 @@ export default function Add({ navigation }) {
           />
         )}
       </View>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
+
+      <Button
+        title="Flip Camera"
+        onPress={() => {
+          setType(
+            type === Camera.Constants.Type.back
+              ? Camera.Constants.Type.front
+              : Camera.Constants.Type.back
+          );
         }}
+      />
+      <Button icon="camera-plus-outline" onPress={() => takePicture()}>
+        Take Picture
+      </Button>
+      <Button icon="image-album" onPress={() => pickImage()}>
+        Select from the Gallery
+      </Button>
+      <Button
+        icon="content-save-outline"
+        onPress={() => navigation.navigate("Save", { image })}
       >
-        <Button
-          title="Flip Camera"
-          onPress={() => {
-            setType(
-              type === Camera.Constants.Type.back
-                ? Camera.Constants.Type.front
-                : Camera.Constants.Type.back
-            );
-          }}
-        />
-        <Button icon="camera-plus-outline" onPress={() => takePicture()}>
-          Take Picture
-        </Button>
-        <Button icon="image-album" onPress={() => pickImage()}>
-          Select from the Gallery
-        </Button>
-        <Button
-          icon="content-save-outline"
-          onPress={() => navigation.navigate("Save", { image })}
-        >
-          Save
-        </Button>
-      </View>
+        Save
+      </Button>
     </View>
   );
 }
